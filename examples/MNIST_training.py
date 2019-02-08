@@ -44,7 +44,7 @@ class MNIST_Training_ReLU:
         y = tf.nn.softmax(tf.matmul(h_drop, W) + b)
         y_ = tf.placeholder(tf.float32, [None, 10])        
        # keep_probability = tf.placeholder(tf.float32)
-        cross_entropy = tf.reduce_mean(-tf.reduce_sum(y_ * tf.log(y), reduction_indices=[1]))
+        cross_entropy = tf.reduce_mean(-tf.reduce_sum(y_ * tf.log(y), axis=[1]))
         train_step = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy)
         init = tf.initializers.global_variables()
 
