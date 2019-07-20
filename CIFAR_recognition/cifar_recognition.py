@@ -71,8 +71,6 @@ def display_stats(cifar10_dataset_folder_path, batch_id, sample_id):
     
     plt.imshow(sample_image)
 
-%matplotlib inline
-%config InlineBackend.figure_format = 'retina'
 
 import numpy as np
 

@@ -1,5 +1,12 @@
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
+from tensorflow import keras
+from tensorflow.python.keras.callbacks import TensorBoard
+import numpy as np
+import matplotlib.pyplot as plt
+from time import time
 
 class MNIST_Training_simple:
     def __init__(self):    
@@ -59,3 +66,42 @@ class MNIST_Training_ReLU:
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
         print( " Точность: %s " % sess.run(accuracy, feed_dict={x: mnist.test.images, y_: mnist.test.labels, keep_probability: 1.} ))
 
+class Fashion_MNIST_Keras:
+    def __init__(self):
+        print(tf.__version__)
+
+        fashion_mnist = keras.datasets.fashion_mnist
+
+        (train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()
+
+        class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat', 
+               'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
+        
+        print("train_images shape is: %s".format(train_images.shape))
+        print("length of data: %s".format(len(train_labels)))
+        tensorboard = TensorBoard(log_dir="logs/{}".format(time()))
+        train_images = train_images / 255.0 # normalize data
+        test_images = test_images / 255.0 # normalize data
+        plt.figure(figsize=(10,10))
+        for i in range(25):
+            plt.subplot(5,5,i+1)
+            plt.xticks([])
+            plt.yticks([])
+            plt.grid(False)
+            plt.imshow(train_images[i], cmap=plt.cm.binary)
+            plt.xlabel(class_names[train_labels[i]])
+        model = keras.Sequential([
+            keras.layers.Flatten(input_shape=(28,28)),
+            keras.layers.Dense(128, activation=tf.nn.relu),
+            keras.layers.Dense(10, activation=tf.nn.softmax)
+        ])
+        model.compile(optimizer=keras.optimizers.Adagrad(lr=0.1, epsilon=None, decay=0.0),
+        loss='sparse_categorical_crossentropy',
+        metrics=['accuracy']
+        )
+        model.fit(train_images, train_labels, epochs=5, 
+        callbacks=[tensorboard])
+        test_loss, test_acc = model.evaluate(test_images, test_labels)
+        print('Точность после проверки: ', test_acc)
+        predictions = model.predict(test_images)
+        model.save("fashion_mnist_model.h5")
