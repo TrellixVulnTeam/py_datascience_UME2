@@ -18,7 +18,7 @@ def start():
     print(df_train.head())
     print(df_train['SalePrice'].describe())
     sns.distplot(df_train['SalePrice'])
-    plt.show()
+    #plt.show()
     print("Skewness: %f " % df_train['SalePrice'].skew())
     print("Kurtosis: %f " % df_train['SalePrice'].kurt())
     var = 'GrLivArea'
@@ -60,7 +60,7 @@ def start():
     sns.set()
     cols = ['SalePrice', 'OverallQual', 'GrLivArea', 'GarageCars', 'TotalBsmtSF', 'FullBath', 'YearBuilt']
     sns.pairplot(df_train[cols], size = 2.5)
-    plt.show()
+    #plt.show()
     #missing data
     total = df_train.isnull().sum().sort_values(ascending=False)
     percent = (df_train.isnull().sum()/df_train.isnull().count()).sort_values(ascending=False)
@@ -78,4 +78,55 @@ def start():
     print(low_range)
     print('\nouter range (high) of the distribution:')
     print(high_range)
-    
+    var = 'GrLivArea'
+    data = pd.concat([df_train['SalePrice'], df_train[var]], axis=1)
+    data.plot.scatter(x=var, y='SalePrice', ylim=(0,800000));
+    #deleting points
+    df_train.sort_values(by = 'GrLivArea', ascending = False)[:2]
+    df_train = df_train.drop(df_train[df_train['Id'] == 1299].index)
+    df_train = df_train.drop(df_train[df_train['Id'] == 524].index)
+    #bivariate analysis saleprice/grlivarea
+    var = 'TotalBsmtSF'
+    data = pd.concat([df_train['SalePrice'], df_train[var]], axis=1)
+    data.plot.scatter(x=var, y='SalePrice', ylim=(0,800000));
+    #histogram and normal probability plot
+    sns.distplot(df_train['SalePrice'], fit=norm);
+    fig = plt.figure()
+    res = stats.probplot(df_train['SalePrice'], plot=plt)
+    #applying log transformation
+    df_train['SalePrice'] = np.log(df_train['SalePrice'])
+    #transformed histogram and normal probability plot
+    sns.distplot(df_train['SalePrice'], fit=norm);
+    fig = plt.figure()
+    res = stats.probplot(df_train['SalePrice'], plot=plt)
+    #histogram and normal probability plot
+    sns.distplot(df_train['GrLivArea'], fit=norm);
+    fig = plt.figure()
+    res = stats.probplot(df_train['GrLivArea'], plot=plt)
+    #data transformation
+    df_train['GrLivArea'] = np.log(df_train['GrLivArea'])
+    #transformed histogram and normal probability plot
+    sns.distplot(df_train['GrLivArea'], fit=norm);
+    fig = plt.figure()
+    res = stats.probplot(df_train['GrLivArea'], plot=plt)
+    #histogram and normal probability plot
+    sns.distplot(df_train['TotalBsmtSF'], fit=norm);
+    fig = plt.figure()
+    res = stats.probplot(df_train['TotalBsmtSF'], plot=plt)
+    #create column for new variable (one is enough because it's a binary categorical feature)
+    #if area>0 it gets 1, for area==0 it gets 0
+    df_train['HasBsmt'] = pd.Series(len(df_train['TotalBsmtSF']), index=df_train.index)
+    df_train['HasBsmt'] = 0 
+    df_train.loc[df_train['TotalBsmtSF']>0,'HasBsmt'] = 1
+    #transform data
+    df_train.loc[df_train['HasBsmt']==1,'TotalBsmtSF'] = np.log(df_train['TotalBsmtSF'])
+    #histogram and normal probability plot
+    sns.distplot(df_train[df_train['TotalBsmtSF']>0]['TotalBsmtSF'], fit=norm);
+    fig = plt.figure()
+    res = stats.probplot(df_train[df_train['TotalBsmtSF']>0]['TotalBsmtSF'], plot=plt)
+    #scatter plot
+    plt.scatter(df_train['GrLivArea'], df_train['SalePrice']);
+    #scatter plot
+    plt.scatter(df_train[df_train['TotalBsmtSF']>0]['TotalBsmtSF'], df_train[df_train['TotalBsmtSF']>0]['SalePrice']);
+    #convert categorical variable into dummy
+    df_train = pd.get_dummies(df_train)
