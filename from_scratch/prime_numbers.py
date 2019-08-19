@@ -54,7 +54,6 @@ class PrimeNumbersClassifier:
         
 #        datas_to_save.loc[not datas_to_save['Number'].isin(prime_numbers_and_not['PM']), 'is_prime'] = pd.Series([0, 1])
 
-        print(datas_to_save)
         training_dataset = tf.data.Dataset.from_tensor_slices((tf.cast(datas_to_save['Number'].values, tf.float32), tf.cast(datas_to_save['yes_prime'].values, tf.float32), tf.cast(datas_to_save['no_prime'].values, tf.float32)))
         return training_dataset
 
@@ -81,14 +80,10 @@ class PrimeNumbersClassifier:
 
             batch_xs = sess.run(batch_xs)
             batch_xs = batch_xs.reshape(10, 100)
-            batch_ys1 = sess.run(batch_ys1)
-            batch_ys1 = batch_ys1.reshape(10, 100)
-            batch_ys2 = sess.run(batch_ys2)
-            batch_ys2 = batch_ys2.reshape(10, 100)
-
+            batch_ys = tf.concat([batch_ys1, batch_ys2], 1)
             print(batch_xs)
-            print(batch_ys1)
-            sess.run(train_step, feed_dict={x: batch_xs, y_: [batch_ys1, batch_ys2]})
+            print(batch_ys)
+            sess.run(train_step, feed_dict={x: batch_xs, y_: batch_ys})
         batch_xs, batch_ys = iterator.get_next()
         batch_xs = sess.run(batch_xs)
         batch_xs = batch_xs.reshape(100, 10)
