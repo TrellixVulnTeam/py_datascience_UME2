@@ -37,7 +37,7 @@ class PrimeNumbersClassifier:
         # csv_file = tf.keras.utils.get_file('heart.csv', '/media/user/Transcend/AI/Datasets/primes1.txt')
         # raw_train_data = get_dataset(train_file_path)
         # raw_test_data = get_dataset(test_file_path)
-        prime_numbers = pd.read_csv('/home/user/workspace/primes1.txt', header=None, delim_whitespace=True)
+        prime_numbers = pd.read_csv('C:\\Users\\user\\py_datascience\\Datasets\\primes1.txt', header=None, delim_whitespace=True)
         prime_numbers = prime_numbers.values.flatten()
         prime_numbers = pd.Series(prime_numbers.transpose())
         prime_numbers_and_not = pd.DataFrame({
@@ -53,7 +53,6 @@ class PrimeNumbersClassifier:
         datas_to_save.loc[~datas_to_save['Number'].isin(prime_numbers_and_not['PM']),'no_prime'] = 1
         
 #        datas_to_save.loc[not datas_to_save['Number'].isin(prime_numbers_and_not['PM']), 'is_prime'] = pd.Series([0, 1])
-
         training_dataset = tf.data.Dataset.from_tensor_slices((tf.cast(datas_to_save['Number'].values, tf.float32), tf.cast(datas_to_save['yes_prime'].values, tf.float32), tf.cast(datas_to_save['no_prime'].values, tf.float32)))
         return training_dataset
 
@@ -61,9 +60,9 @@ class PrimeNumbersClassifier:
         datas.to_csv('/media/user/Transcend/AI/Datasets/primes.csv')
     def startTrain(self, dataset):
         # we will load 1 number
-        x = tf.placeholder(tf.float32, [None, 100])
+        x = tf.placeholder(tf.float32, [None, 1000])
         # each number can have 1 of 2 classes
-        W = tf.Variable(tf.zeros([100, 2]))
+        W = tf.Variable(tf.zeros([1000, 2]))
         b = tf.Variable(tf.zeros([2]))
         y = tf.nn.softmax(tf.matmul(x, W) + b)
         y_ = tf.placeholder(tf.float32, [None, 2])
@@ -77,21 +76,23 @@ class PrimeNumbersClassifier:
         for i in range(15):
             print("batch: ", i)
             batch_xs, batch_ys1, batch_ys2 = iterator.get_next()
-
-            batch_xs = sess.run(batch_xs)
-            batch_xs = batch_xs.reshape(10, 100)
-            batch_ys = tf.concat([batch_ys1, batch_ys2], 1)
-            print(batch_xs)
-            print(batch_ys)
+            batch_xs = sess.run(tf.reshape(batch_xs, [1, 1000]))
+            batch_ys1 = sess.run(tf.reshape(batch_ys1, [1000, 1]))
+            #print(batch_ys1)
+            batch_ys2 = sess.run(tf.reshape(batch_ys2, [1000, 1]))
+            #print(bath_ys2)
+            batch_ys = sess.run(tf.concat([batch_ys1, batch_ys2], 1))
             sess.run(train_step, feed_dict={x: batch_xs, y_: batch_ys})
-        batch_xs, batch_ys = iterator.get_next()
-        batch_xs = sess.run(batch_xs)
-        batch_xs = batch_xs.reshape(100, 10)
-        batch_ys = sess.run(batch_ys)
-        batch_ys = batch_ys.reshape(100, 10)
-        # correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
-        # accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-        prediction=tf.argmax(y,1)
-        print(prediction.eval(feed_dict={x: batch_xs}, session=sess))
+        batch_xs, batch_ys1, batch_ys2 = iterator.get_next()
+        batch_xs = sess.run(tf.reshape(batch_xs, [1, 1000]))
+        batch_ys1 = sess.run(tf.reshape(batch_ys1, [1000, 1]))
+        #print(batch_ys1)
+        batch_ys2 = sess.run(tf.reshape(batch_ys2, [1000, 1]))
+        #print(bath_ys2)
+        batch_ys = sess.run(tf.concat([batch_ys1, batch_ys2], 1))
+        correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
+        accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+        print(correct_prediction.eval(feed_dict={x: batch_xs, y_: batch_ys}, session=sess))
+        print(accuracy)
         # print("Точность %s", sess.run(accuracy, feed_dict={x: batch_xs, y_: batch_ys}))
     
