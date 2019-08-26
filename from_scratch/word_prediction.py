@@ -8,7 +8,7 @@ from keras_preprocessing.text import Tokenizer
  
 tf.enable_eager_execution()
  
-file_path = "./Datasets/Shakespear.txt"
+file_path = ".\\Datasets\\Shakespear.txt"
  
 text = unidecode.unidecode(open(file_path).read())
  
@@ -79,27 +79,27 @@ checkpoint = tf.train.Checkpoint(optimizer=optimizer, model=model)
 def loss_function(labels, logits):
     return tf.losses.sparse_softmax_cross_entropy(labels=labels, logits=logits)
 
-EPOCHS = 100
-# for epoch in range(EPOCHS):
-#     start = time.time()
+EPOCHS = 10
+for epoch in range(EPOCHS):
+    start = time.time()
  
-#     hidden = model.reset_states()
+    hidden = model.reset_states()
  
-#     for (batch, (input, target)) in enumerate(dataset):
-#         with tf.GradientTape() as tape:
-#             predictions, hidden = model(input, hidden)
+    for (batch, (input, target)) in enumerate(dataset):
+        with tf.GradientTape() as tape:
+            predictions, hidden = model(input, hidden)
  
-#             target = tf.reshape(target, (-1,))
-#             loss = loss_function(target, predictions)
+            target = tf.reshape(target, (-1,))
+            loss = loss_function(target, predictions)
  
-#             grads = tape.gradient(loss, model.variables)
-#             optimizer.apply_gradients(zip(grads, model.variables))
+            grads = tape.gradient(loss, model.variables)
+            optimizer.apply_gradients(zip(grads, model.variables))
  
-#             if batch % 100 == 0:
-#                 print('Epoch {} Batch {} Loss{:.4f}'.format(epoch + 1, batch, loss))
+            if batch % 100 == 0:
+                print('Epoch {} Batch {} Loss{:.4f}'.format(epoch + 1, batch, loss))
  
-#     if (epoch + 1) % 10 == 0:
-#         checkpoint.save(file_prefix=checkpoint_prefix)
+    if (epoch + 1) % 10 == 0:
+        checkpoint.save(file_prefix=checkpoint_prefix)
 
 checkpoint.restore(tf.train.latest_checkpoint(checkpoint_dir))
   
