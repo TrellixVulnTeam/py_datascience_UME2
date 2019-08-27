@@ -72,7 +72,7 @@ model = Model(vocab_size, embedding_dim, units, BATCH_SIZE)
 
 optimizer = tf.train.AdamOptimizer()
  
-checkpoint_dir = './training_checkpoints_1'
+checkpoint_dir = '.\\training_checkpoints_wordstat'
 checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt")
 checkpoint = tf.train.Checkpoint(optimizer=optimizer, model=model)
 

@@ -4,7 +4,7 @@ from examples import normalized_init
 from examples import seaborn_tuts
 from examples import data_exploring
 from from_scratch import prime_numbers
-from from_scratch import word_prediction
+#from from_scratch import word_prediction
 #simple_normal_distribution.SimpleNormalDistribution()
 #MNIST_training.MNIST_Training_ReLU()
 #MNIST_training.MNIST_Training_simple()
@@ -13,4 +13,4 @@ from from_scratch import word_prediction
 #seaborn_tuts.show_tutorial()
 #seaborn_tuts.show_iris()
 #data_exploring.start()
-#prime_numbers.PrimeNumbersClassifier()
+prime_numbers.KerasPrimeNumbersClassifier()

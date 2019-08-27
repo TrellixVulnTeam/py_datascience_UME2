@@ -135,7 +135,7 @@ class KerasPrimeNumbersClassifier:
     def startTrain(self, dataset):
         # we will load 1 number
         model = keras.models.Sequential()
-        model.add(keras.layers.Dense(2, activation='softmax', input_shape=(1000,)))
+        model.add(keras.layers.Dense(1000, activation='softmax', input_shape=(1000,)))
         model.compile(
             optimizer='adam',
             loss='categorical_crossentropy',
@@ -143,26 +143,19 @@ class KerasPrimeNumbersClassifier:
         )
         datas = dataset.shuffle(1000).batch(1000)
         iterator = datas.make_one_shot_iterator()
-        for i in range(15):
-            print("batch: ", i)
-            batch_xs, batch_ys1, batch_ys2 = iterator.get_next()
-            batch_xs = sess.run(tf.reshape(batch_xs, [1, 1000]))
-            batch_ys1 = sess.run(tf.reshape(batch_ys1, [1000, 1]))
-            #print(batch_ys1)
-            batch_ys2 = sess.run(tf.reshape(batch_ys2, [1000, 1]))
-            #print(bath_ys2)
-            batch_ys = sess.run(tf.concat([batch_ys1, batch_ys2], 1))
-            model.fit(batch_xs, batch_ys, epochs)
         batch_xs, batch_ys1, batch_ys2 = iterator.get_next()
+        sess = tf.Session()
         batch_xs = sess.run(tf.reshape(batch_xs, [1, 1000]))
-        batch_ys1 = sess.run(tf.reshape(batch_ys1, [1000, 1]))
+        batch_ys1 = sess.run(tf.reshape(batch_ys1, [1, 1000]))
         #print(batch_ys1)
-        batch_ys2 = sess.run(tf.reshape(batch_ys2, [1000, 1]))
+        batch_ys2 = sess.run(tf.reshape(batch_ys2, [1, 1000]))
         #print(bath_ys2)
         batch_ys = sess.run(tf.concat([batch_ys1, batch_ys2], 1))
-        correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
-        accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-        print(correct_prediction.eval(feed_dict={x: batch_xs, y_: batch_ys}, session=sess))
+        model.fit(x=batch_xs, y=batch_ys,
+                steps_per_epoch=100,
+                epochs=20)
+        score = model.evaluate(batch_xs, batch_ys, batch_size=1000)
+
         print(accuracy)
         # print("Точность %s", sess.run(accuracy, feed_dict={x: batch_xs, y_: batch_ys}))
     
