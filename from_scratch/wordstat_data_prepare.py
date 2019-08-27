@@ -21,8 +21,10 @@ def write_by_read():
     with open(wordstat_path) as read_f:
         while True:
             c = read_f.read(1024)
+            splited_c = c.split('\n')
             if not c:
                 break
-            print(repr(c))
+            #print(repr(c))
+            print(splited_c)
 
 write_by_read()
