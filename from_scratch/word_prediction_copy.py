@@ -9,6 +9,7 @@ from keras_preprocessing.text import Tokenizer
 tf.enable_eager_execution()
  
 file_path = "G:\\New folder\\month-2011-12-qtraf_million"
+file_path = "G:\\New folder\\month-2011-12-qtraf_small"
  
 text = unidecode.unidecode(open(file_path).read())
  
@@ -55,7 +56,7 @@ class Model(tf.keras.Model):
  
     def call(self, inputs, hidden):
         inputs = self.embedding(inputs)
- 
+        #print(inputs)
         output, states = self.gru(inputs, initial_state=hidden)
  
         output = tf.reshape(output, (-1, output.shape[2]))
@@ -67,20 +68,22 @@ class Model(tf.keras.Model):
  
 embedding_dim = 100
  
-units = 512
+units = 1024
  
 model = Model(vocab_size, embedding_dim, units, BATCH_SIZE)
 
 optimizer = tf.train.AdamOptimizer()
  
-checkpoint_dir = '.\\training_checkpoints_wordstat'
+#checkpoint_dir = '.\\training_checkpoints_wordstat'
+checkpoint_dir = '.\\training_checkpoints_wordstat_small1024'
+
 checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt")
 checkpoint = tf.train.Checkpoint(optimizer=optimizer, model=model)
 
 def loss_function(labels, logits):
     return tf.losses.sparse_softmax_cross_entropy(labels=labels, logits=logits)
 
-EPOCHS = 1
+EPOCHS = 10
 # for epoch in range(EPOCHS):
 #     start = time.time()
  
@@ -97,24 +100,25 @@ EPOCHS = 1
 #             optimizer.apply_gradients(zip(grads, model.variables))
  
 #             if batch % 100 == 0:
-#                 print('Epoch {} Batch {} Loss{:.4f}'.format(epoch + 1, batch, loss))
+#                 print('Epoch {} Batch {} Loss {:.4f}'.format(epoch + 1, batch, loss))
  
 #     if (epoch + 1) % 10 == 0:
 #         checkpoint.save(file_prefix=checkpoint_prefix)
 
 checkpoint.restore(tf.train.latest_checkpoint(checkpoint_dir))
   
-start_string = "nekogda"
+start_string = "mishka"
  
 input_eval = [word2idx[start_string]]
 input_eval = tf.expand_dims(input_eval, 0)
  
 text_generated = ''
- 
+print("UNITS: %s" %(units))
 hidden = [tf.zeros((1, units))]
  
 predictions, hidden = model(input_eval, hidden)
- 
+print("PREDICTIONS")
+print(predictions)
 predicted_id = tf.argmax(predictions[-1]).numpy()
  
 text_generated += " " + idx2word[predicted_id]
