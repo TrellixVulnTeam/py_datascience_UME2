@@ -106,7 +106,7 @@ EPOCHS = 10
 #         checkpoint.save(file_prefix=checkpoint_prefix)
 
 checkpoint.restore(tf.train.latest_checkpoint(checkpoint_dir))
-  
+
 start_string = "mishka"
  
 input_eval = [word2idx[start_string]]
