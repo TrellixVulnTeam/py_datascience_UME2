@@ -4,11 +4,19 @@ import gensim
 import pymorphy2
 import numpy as np
 import tensorflow as tf
-import unidecode
 from keras_preprocessing.text import Tokenizer
- 
+import argparse
+
+parser = argparse.ArgumentParser(description='Generating sentences v0.01')
+parser.add_argument('word', metavar='word_to_predict', type=str, nargs='+',
+                    help='an integer for the accumulator')
+args = parser.parse_args()
+predict_word = "мишка"
+print("ARGS: %s" %(args))
+if args.word:
+    predict_word = args.word[0]
+
 tf.enable_eager_execution()
- 
 file_path = "/home/neuron/dataset/small_linux.txt"
 file_path = "G:\\New folder\\month-2011-12-qtraf_small"
 
@@ -151,16 +159,12 @@ EPOCHS = 10
 #         checkpoint.save(file_prefix=checkpoint_prefix)
 
 checkpoint.restore(tf.train.latest_checkpoint(checkpoint_dir))
-current_word = "мишка"
-input_eval = [word2idx[current_word]]
-input_eval = tf.expand_dims(input_eval, 0)
-
 #print("UNITS: %s" %(units))
 hidden = [tf.zeros((1, units))]
 
 #Now we find similars for start word
-similar_words = getSimilarsForWord(current_word, 10)
-similar_words.append(current_word)
+similar_words = getSimilarsForWord(predict_word, 10)
+similar_words.append(predict_word)
 dataset_words_list = sortSimilarListByDataset(similar_words)
 #print("dataset_words_list %s" %(dataset_words_list))
 
