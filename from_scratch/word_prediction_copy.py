@@ -107,20 +107,27 @@ EPOCHS = 10
 
 checkpoint.restore(tf.train.latest_checkpoint(checkpoint_dir))
 
-start_string = "линия"
- 
-input_eval = [word2idx[start_string]]
+current_word = "линия"
+input_eval = [word2idx[current_word]]
 input_eval = tf.expand_dims(input_eval, 0)
- 
-text_generated = ''
+
 print("UNITS: %s" %(units))
 hidden = [tf.zeros((1, units))]
- 
-predictions, hidden = model(input_eval, hidden)
-print("PREDICTIONS")
-print(predictions)
-predicted_id = tf.argmax(predictions[-1]).numpy()
- 
-text_generated += " " + idx2word[predicted_id]
- 
-print(start_string + text_generated)
+predicted_id = word2idx[current_word]
+text_generated = current_word
+
+for i in range(4):
+    current_word = idx2word[predicted_id]
+    input_eval = [word2idx[current_word]]
+    input_eval = tf.expand_dims(input_eval, 0)    
+    
+    predictions, hidden = model(input_eval, hidden)
+    
+    print("PREDICTIONS")
+    print(predictions)
+    
+    predicted_id = tf.argmax(predictions[-1]).numpy()
+
+    text_generated += " " + idx2word[predicted_id]
+
+    print(text_generated)
