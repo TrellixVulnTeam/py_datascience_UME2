@@ -9,11 +9,14 @@ from keras_preprocessing.text import Tokenizer
  
 tf.enable_eager_execution()
  
-file_path = "G:\\New folder\\month-2011-12-qtraf_million"
+file_path = "/home/neuron/dataset/small_linux.txt"
 file_path = "G:\\New folder\\month-2011-12-qtraf_small"
 
+load_word2vec_path = "/home/neuron/dataset/model.bin"
+load_word2vec_path = "G:\\New folder\\ruwikiruscorpora_tokens_elmo_1024_2019\\ruwikiruscorpora_upos_skipgram_300_2_2019\\model.bin"
+
 #Now we load 
-model = gensim.models.KeyedVectors.load_word2vec_format("G:\\New folder\\ruwikiruscorpora_tokens_elmo_1024_2019\\ruwikiruscorpora_upos_skipgram_300_2_2019\\model.bin", binary=True)
+model = gensim.models.KeyedVectors.load_word2vec_format(load_word2vec_path, binary=True)
 model.init_sims(replace=True)
 morph = pymorphy2.MorphAnalyzer()
 cotags = {
