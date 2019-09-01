@@ -11,7 +11,7 @@ tf.enable_eager_execution()
 file_path = "G:\\New folder\\month-2011-12-qtraf_million"
 file_path = "G:\\New folder\\month-2011-12-qtraf_small"
  
-text = unidecode.unidecode(open(file_path).read())
+text = open(file_path).read()
  
 tokenizer = Tokenizer()
 tokenizer.fit_on_texts([text])
@@ -68,14 +68,14 @@ class Model(tf.keras.Model):
  
 embedding_dim = 100
  
-units = 1024
+units = 2048
  
 model = Model(vocab_size, embedding_dim, units, BATCH_SIZE)
 
 optimizer = tf.train.AdamOptimizer()
  
 #checkpoint_dir = '.\\training_checkpoints_wordstat'
-checkpoint_dir = '.\\training_checkpoints_wordstat_small1024'
+checkpoint_dir = '.\\training_checkpoints_wordstat_small2048'
 
 checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt")
 checkpoint = tf.train.Checkpoint(optimizer=optimizer, model=model)
@@ -107,7 +107,7 @@ EPOCHS = 10
 
 checkpoint.restore(tf.train.latest_checkpoint(checkpoint_dir))
 
-start_string = "mishka"
+start_string = "линия"
  
 input_eval = [word2idx[start_string]]
 input_eval = tf.expand_dims(input_eval, 0)
