@@ -108,7 +108,10 @@ def sortSimilarListByDataset(words_list):
 #Returns Top N words, that similars with
 def getSimilarsForWord(word, top=10):
     parsed = morph.parse(word)
-    pos = cotags[parsed[0].tag.POS]
+    try:
+        pos = cotags[parsed[0].tag.POS]
+    except KeyError:
+        return [word]
     gensim_find_word = word + "_" + pos
     most_similars = model.most_similar([gensim_find_word], topn=top)
     return_list = []
@@ -169,9 +172,15 @@ dataset_words_list = sortSimilarListByDataset(similar_words)
 #print("dataset_words_list %s" %(dataset_words_list))
 
 sequences_lists = [[word] for word in dataset_words_list]
-print(sequences_lists)
+# sequences_list = [[word] for word in dataset_words_list]
+# sequences_lists = []
+# for i in range(5):
+#     for elem in sequences_list:
+#         sequences_lists.append(elem)
+
+#print(sequences_lists)
 for sequence in sequences_lists:
-    for i in range(4):
+    for i in range(1):
         input_eval = [word2idx[sequence[i]]]
         input_eval = tf.expand_dims(input_eval, 0)    
 
