@@ -23,6 +23,6 @@ model = gensim.models.Word2Vec(min_count=1)
 model.build_vocab(sequences)
 model.train(sequences, total_examples=model.corpus_count, epochs=model.iter)
 
-model.save("G:\\New folder\\models\\gensim\\wordstat_100MB_model")
+model.save(model_path)
 
 model.predict_output_word(['казань', "продажа"])
