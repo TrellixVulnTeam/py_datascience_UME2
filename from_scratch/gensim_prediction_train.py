@@ -5,13 +5,8 @@ import argparse
 
 parser = argparse.ArgumentParser(description='Generating sentences v0.01')
 parser.add_argument('word', metavar='word_to_predict', type=str, nargs='+',
-                    help='an integer for the accumulator')
-args = parser.parse_args()
-predict_word = "мишка"
-print("ARGS: %s" %(args))
-if args.word:
-    predict_word = args.word[0]
-
+                    help='Words sentence for phrase prediction')
+dataset_path = "G:\\New folder\\models\\gensim\\wordstat_100MB_model"
 model_path = "G:\\New folder\\models\\gensim\\wordstat_100MB_model"
 sequences = []
 with open(file_path) as read_f:
