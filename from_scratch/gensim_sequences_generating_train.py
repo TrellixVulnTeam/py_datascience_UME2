@@ -1,16 +1,14 @@
 import gensim
-import pymorphy2
 import datetime
 import time
 import os
-import logging
 file_path = "G:\\New folder\\subfile\\month-2011-12-qtraf_0_2"
 model_save_path = "G:\\New folder\\models\\gensim\\phrases_45MB_model_clean"
 train_log_path = "G:\\New folder\\logs\\gensim_train_log.txt"
 
-#file_path = "/home/neuron/worstat_archives/wordstat_splitting/month-2011-12-qtraf_processed"
-#train_log_path = "/home/neuron/logs/gensim_train_log.txt"
-#model_save_path = "/home/neuron/models/gensim/wordstat_big_model"
+file_path = "/home/neuron/worstat_archives/wordstat_splitting/month-2011-12-qtraf_processed"
+train_log_path = "/home/neuron/logs/gensim_train_log.txt"
+model_save_path = "/home/neuron/models/gensim/wordstat_big_model10"
 
 log_file = open(train_log_path, "a")
 log_file.write("Training Dataset :Name: %s :Size: %s :Date: %s \n" %(file_path, os.path.getsize(file_path), datetime.datetime.now()))
@@ -26,13 +24,14 @@ def train_model_on_dataset(model, dataset_path, update_vocabulary=False):
     model.build_vocab(sequences, update=update_vocabulary)
     model.train(sequences, total_examples=model.corpus_count, epochs=model.iter)
     end_time = time.time() - start_time
-    log_file.write("Elapsed time: %s secs. for file: %s \n" %(end_time))
+    print("File: %s elapsed time: %s secs. Size: %s Bytes\n" %(dataset_path, end_time, os.path.getsize(dataset_path)))
+    log_file.write("File: %s elapsed time: %s secs. Size: %s Bytes\n" %(dataset_path, end_time, os.path.getsize(dataset_path)))
     return model
 
 def train_new_model_by_dataset(model, dataset_path, save_model_path, postfix):
     start_time = time.time()
     if postfix:
-        for i in range(4):
+        for i in range(10):
             next_series_fn = dataset_path + postfix + str(i)
             if os.path.exists(next_series_fn):
                 if i == 0:
