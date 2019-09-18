@@ -28,8 +28,8 @@ def getSimilarsForSentence(sentence, model, top=10):
     return cur_sentences
 
 
-#log_path = "/home/neuron/logs/gensim_run_log.txt"
-log_path = "G:\\New folder\\logs\\gensim_run_log.txt"
+log_path = "/home/neuron/logs/gensim_run_log.txt"
+#log_path = "G:\\New folder\\logs\\gensim_run_log.txt"
 
 log_file = open(log_path, "a")
 #Time measurement
@@ -47,20 +47,23 @@ if args.sentence:
     starting_sentence = args.sentence
 
 print(starting_sentence)
-model_path = "G:\\New folder\\models\\gensim\\wordstat_100MB_model"
-#model_path = "/home/neuron/models/gensim/wordstat_big_model10"
+#model_path = "G:\\New folder\\models\\gensim\\wordstat_100MB_model"
+model_path = "/home/neuron/models/gensim/wordstat_big_model10"
 model = gensim.models.Word2Vec.load(model_path)
-next_word_variants = model.predict_output_word(starting_sentence, topn=20)
-
-print(getSimilarsForSentence(starting_sentence, model, 3))
 
 log_file.write("Session Date: %s Time: %.0f Model Size: %s \n" %(datetime.datetime.now(), time.time() - start_time, os.path.getsize(model_path)))
 log_file.write("Input: %s\n" %(starting_sentence))
 
 log_file.write("Output:\n")
-for ans in next_word_variants:
-    new_sen = starting_sentence[:]
-    new_sen.append(ans[0])
-    print(" ".join(new_sen))
-    log_file.write("".join(new_sen) + "\n")
+
+variant_sentences = getSimilarsForSentence(starting_sentence, model, 3)
+
+
+for sentence in variant_sentences:
+    next_word_variants = model.predict_output_word(starting_sentence, topn=20)
+    for ans in next_word_variants:
+        new_sen = sentence[:]
+        new_sen.append(ans[0])
+        print(" ".join(new_sen))
+        log_file.write("".join(new_sen) + "\n")
 log_file.write("//---------------\n")
